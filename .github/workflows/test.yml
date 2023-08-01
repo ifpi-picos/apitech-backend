@@ -10,9 +10,19 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    env:
+      NODE_ENV: secrets.test_env.NODE_ENV
+      PORT: secrets.test_env.PORT
+      CORS_ORIGIN: secrets.test_env.CORS_ORIGIN
+      DB_URI: secrets.test_env.DB_URI
+      JWT_TOKEN: secrets.test_env.JWT_TOKEN
+      API_TOKEN: secrets.test_env.API_TOKEN
+      API_BASE: secrets.test_env.API_BASE
+      SALT_ROUNDS: secrets.test_env.SALT_ROUNDS
+
     strategy:
       matrix:
-        node-version: [16.x]
+        node-version: [18.x]
 
     steps:
     - uses: actions/checkout@v3
