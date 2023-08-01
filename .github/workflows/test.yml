@@ -10,16 +10,6 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    env:
-      NODE_ENV: secrets.NODE_ENV
-      PORT: secrets.PORT
-      CORS_ORIGIN: secrets.CORS_ORIGIN
-      DB_URI: secrets.DB_URI
-      JWT_TOKEN: secrets.JWT_TOKEN
-      API_TOKEN: secrets.API_TOKEN
-      API_BASE: secrets.API_BASE
-      SALT_ROUNDS: secrets.SALT_ROUNDS
-
     strategy:
       matrix:
         node-version: [18.x]
@@ -31,6 +21,8 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
+    - run: |
+        echo "${{ secrets.ENV_FILE }}" > test.env
     - run: npm install
     - run: npm run build
     - run: npm test
