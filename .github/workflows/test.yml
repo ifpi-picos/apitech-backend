@@ -11,14 +11,14 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      NODE_ENV: secrets.test_env.NODE_ENV
-      PORT: secrets.test_env.PORT
-      CORS_ORIGIN: secrets.test_env.CORS_ORIGIN
-      DB_URI: secrets.test_env.DB_URI
-      JWT_TOKEN: secrets.test_env.JWT_TOKEN
-      API_TOKEN: secrets.test_env.API_TOKEN
-      API_BASE: secrets.test_env.API_BASE
-      SALT_ROUNDS: secrets.test_env.SALT_ROUNDS
+      NODE_ENV: secrets.NODE_ENV
+      PORT: secrets.PORT
+      CORS_ORIGIN: secrets.CORS_ORIGIN
+      DB_URI: secrets.DB_URI
+      JWT_TOKEN: secrets.JWT_TOKEN
+      API_TOKEN: secrets.API_TOKEN
+      API_BASE: secrets.API_BASE
+      SALT_ROUNDS: secrets.SALT_ROUNDS
 
     strategy:
       matrix:
