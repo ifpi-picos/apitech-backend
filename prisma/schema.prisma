@@ -8,11 +8,30 @@ datasource db {
     url      = env("DB_URI")
 }
 
-//placeholder
-model User {
-    id        String   @id @default(uuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    email     String   @unique
-    name      String?
+model Usuarios {
+    id       Int        @id @default(autoincrement())
+    nome     String
+    email    String     @unique
+    senha    String
+    apiarios Apiarios[]
+}
+
+model Apiarios {
+    id        Int        @id @default(autoincrement())
+    nome      String
+    usuario   Usuarios   @relation(fields: [usuarioId], references: [id])
+    usuarioId Int
+    colmeias  Colmeias[]
+}
+
+model Colmeias {
+    id              Int      @id @default(autoincrement())
+    numero          Int
+    apiario         Apiarios @relation(fields: [apiarioId], references: [id])
+    apiarioId       Int
+    estadoCriaNova   Json?    @default("{}")
+    estadoCriaMadura Json?    @default("{}")
+    estadoMel        Json?    @default("{}")
+    estadoPolen      Json?    @default("{}")
+    estadoRainha     Json?    @default("{}")
 }
