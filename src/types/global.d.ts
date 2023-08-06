@@ -12,19 +12,17 @@ declare global {
         SALT_ROUNDS: number
     }
 
-    type Usario = {
+    type Usuario = {
         id: number
         nome: string
         email: string
         senha: string
-        apiarios: Apiario[]
     }
 
     type Apiario = {
         id: number
         nome: string
         usuarioId: number
-        colmeias: Colmeia[]
     }
 
     enum CriaLocalizada {
@@ -129,6 +127,23 @@ declare global {
             localizada: RainhaLocalizada
             estado?: EstadoRainha
             aspecto?: AspectoRainha
+        }
+    }
+
+    type UsuarioPreCadastro = {
+        nome: string
+        email: string
+        senha: string
+    }
+
+    namespace Express {
+        interface Request {
+            startTime: number
+            usuario?: {
+                id: number
+                nome: string
+                email: string
+            }
         }
     }
 }

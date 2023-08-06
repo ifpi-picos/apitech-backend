@@ -1,6 +1,6 @@
 {
   "name": "apitech-backend",
-  "version": "1.1.0",
+  "version": "1.2.1",
   "description": "",
   "main": "server.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "lint-fix": "eslint . --ext .ts --fix",
     "lint-fix-tests": "eslint tests --ext .js --fix",
     "lint-fix-all": "npm run lint-fix && npm run lint-fix-tests",
-    "test": "jest --no-cache  --detectOpenHandles --runInBand --forceExit",
+    "test": "jest --forceExit --coverage -w 12 --testPathIgnorePatterns \"logger.test.js\"",
     "build-test": "npm run build && npm run test",
     "prepare-all": "npm run lint-fix-all && npm run build && npm run test"
   },
@@ -26,15 +26,17 @@
   },
   "homepage": "https://github.com/ifpi-picos/apitech-backend#readme",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
     "@types/jest": "^29.5.3",
+    "@types/jsonwebtoken": "^9.0.2",
+    "@types/luxon": "^3.3.1",
     "@types/supertest": "^2.0.12",
     "@typescript-eslint/eslint-plugin": "^6.2.1",
     "@typescript-eslint/parser": "^6.2.1",
     "eslint": "^8.46.0",
     "eslint-plugin-jest": "^27.2.3",
-    "prettier": "^3.0.0",
     "supertest": "^6.3.3",
     "ts-jest": "^29.1.1",
     "typescript": "^5.1.6"
@@ -50,5 +52,8 @@
     "jsonwebtoken": "^9.0.1",
     "luxon": "^3.3.0",
     "prisma": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
