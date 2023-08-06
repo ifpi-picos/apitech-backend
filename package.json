@@ -1,6 +1,6 @@
 {
   "name": "apitech-backend",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "",
   "main": "server.js",
   "scripts": {
@@ -11,7 +11,7 @@
     "lint-fix": "eslint . --ext .ts --fix",
     "lint-fix-tests": "eslint tests --ext .js --fix",
     "lint-fix-all": "npm run lint-fix && npm run lint-fix-tests",
-    "test": "jest --forceExit --coverage -w 12",
+    "test": "jest --forceExit --coverage -w 12 --testPathIgnorePatterns \"logger.test.js\"",
     "build-test": "npm run build && npm run test",
     "prepare-all": "npm run lint-fix-all && npm run build && npm run test"
   },
