@@ -11,6 +11,6 @@ describe('Exemplo de série testes', () => {
 	it('Exemplo de teste', async () => {
 		const res = await request(app).get('/exemplo')
 
-		expect(res.status).toBe(404)
+		expect(res.status).toBe(401)
 	})
 })
