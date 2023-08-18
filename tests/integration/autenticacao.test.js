@@ -51,3 +51,40 @@ describe('POST /login', () => {
 		expect(res.body).toHaveProperty('mensagem')
 	})
 })
+
+describe('POST /token', () => {
+	let app
+	let token
+
+	beforeAll(async () => {
+		app = await construirApp
+
+		await request(app).post('/usuarios').send({
+			nome: 'Teste Atualizar Token',
+			email: 'teste_atualizar_token@email.com',
+			senha: '12345678'
+		})
+
+		const res = await request(app).post('/login').send({
+			email: 'teste_atualizar_token@email.com',
+			senha: '12345678'
+		})
+
+		token = res.body.token
+	})
+
+	it('200 - Atualizar um token válido', async () => {
+		const res = await request(app).post('/token').set('Authorization', `Bearer ${token}`).send()
+
+		expect(res.status).toBe(200)
+		expect(res.body).toHaveProperty('token')
+	})
+
+	it('401 - Atualizar um token inválido', async () => {
+		const res = await request(app).post('/token').set('Authorization', `Bearer ${token}1`).send()
+
+		expect(res.status).toBe(401)
+		expect(res.body).toHaveProperty('mensagem')
+		expect(res.body.mensagem).toBe('Token inválido')
+	})
+})

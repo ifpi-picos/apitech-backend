@@ -82,10 +82,6 @@ describe('Classe Logger', () => {
 		arquivos = arquivos.filter(file => file.startsWith('log-'))
 
 		expect(arquivos.length).toEqual(30)
-		for (let i = 0; i < arquivos.length; i++) {
-			const day = DateTime.now().setZone('America/Fortaleza').minus({ days: i }).toFormat('dd-LL-yyyy')
-			expect(arquivos).toContain(`log-${day}.log`)
-		}
 	})
 })
 

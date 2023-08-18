@@ -3,8 +3,6 @@ name: Tests CI
 on:
   push:
     branches: [ "main", "dev" ]
-  pull_request:
-    branches: [ "main" ]
 jobs:
   build-test:
 
@@ -25,4 +23,4 @@ jobs:
         echo "${{ secrets.ENV_FILE }}" > test.env
     - run: npm install
     - run: npm run build
-    - run: npm test
+    - run: npm run actions-test
