@@ -12,4 +12,12 @@ export class UsuariosController {
 	static async buscarUsuarioPorEmail(email: string): Promise<Usuario | null> {
 		return await db.usuarios.findUnique({ where: { email } })
 	}
+
+	static async atualizarUsuario(id: number, usuario: UsuarioPreModificacao): Promise<Usuario> {
+		return await db.usuarios.update({ where: { id }, data: usuario })
+	}
+
+	static async apagarUsuario(id: number): Promise<Usuario> {
+		return await db.usuarios.delete({ where: { id } })
+	}
 }

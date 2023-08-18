@@ -136,6 +136,12 @@ declare global {
         senha: string
     }
 
+    type UsuarioPreModificacao = {
+        nome?: string
+        email?: string
+        senha?: string
+    }
+
     namespace Express {
         interface Request {
             startTime: number
