@@ -19,16 +19,16 @@ model Usuarios {
 model Apiarios {
     id        Int        @id @default(autoincrement())
     nome      String
-    usuario   Usuarios   @relation(fields: [usuarioId], references: [id])
+    usuario   Usuarios   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
     usuarioId Int
     colmeias  Colmeias[]
 }
 
 model Colmeias {
-    id              Int      @id @default(autoincrement())
-    numero          Int
-    apiario         Apiarios @relation(fields: [apiarioId], references: [id])
-    apiarioId       Int
+    id               Int      @id @default(autoincrement())
+    numero           Int
+    apiario          Apiarios @relation(fields: [apiarioId], references: [id], onDelete: Cascade)
+    apiarioId        Int
     estadoCriaNova   Json?    @default("{}")
     estadoCriaMadura Json?    @default("{}")
     estadoMel        Json?    @default("{}")

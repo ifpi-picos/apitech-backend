@@ -20,7 +20,6 @@ const configurarExpress = () => {
 	app.use(middlewares)
 	app.use(config.API_BASE, routes)
 
-
 	return app
 }
 
