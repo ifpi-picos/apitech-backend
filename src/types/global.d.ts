@@ -142,6 +142,16 @@ declare global {
         senha?: string
     }
 
+    type ApiarioPreCadastro = {
+        nome: string
+        usuarioId: number
+    }
+
+    type ApiarioPreModificacao = {
+        nome?: string
+        usuarioId: number
+    }
+
     namespace Express {
         interface Request {
             startTime: number

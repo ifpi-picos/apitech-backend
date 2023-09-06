@@ -2,7 +2,7 @@ const request = require('supertest')
 const { construirApp } = require('../../dist/app')
 const db = require('../../dist/config/database')
 
-describe('POST /usuario', () => {
+describe('POST /usuarios', () => {
 	let app
 
 	beforeAll(async () => {
@@ -87,7 +87,7 @@ describe('POST /usuario', () => {
 	})
 })
 
-describe('GET /usuario', () => {
+describe('GET /usuarios', () => {
 	let app
 	let token
 
@@ -130,7 +130,7 @@ describe('GET /usuario', () => {
 	})
 })
 
-describe('PATCH /usuario', () => {
+describe('PATCH /usuarios', () => {
 	let app
 	let token
 
@@ -220,7 +220,7 @@ describe('PATCH /usuario', () => {
 })
 
 
-describe('DELETE /usuario', () => {
+describe('DELETE /usuarios', () => {
 	let app
 	let token
 
