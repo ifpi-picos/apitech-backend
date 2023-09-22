@@ -23,4 +23,5 @@ jobs:
             npm prune
             npm install
             npm audit fix --force
+            npm run build
             pm2 reload apitech

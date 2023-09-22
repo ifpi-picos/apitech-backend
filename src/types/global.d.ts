@@ -152,6 +152,11 @@ declare global {
         usuarioId: number
     }
 
+    type ColmeiaPreCadastro = {
+        numero: number
+        apiarioId: number
+    }
+
     namespace Express {
         interface Request {
             startTime: number
