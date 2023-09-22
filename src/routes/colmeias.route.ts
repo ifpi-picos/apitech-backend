@@ -7,45 +7,48 @@ import logger from '../config/logger'
 const router = Router()
 
 router.post('/', async (req: Request, res: Response) => {
-    try {
-        if (req.usuario) {
-            req.body.usuarioId = req.usuario.id
+	try {
+		if (req.usuario) {
+			if (req.body.apiarioId) {
+				const apiario = await ApiariosController.buscarApiarioPorId(Number(req.body.apiarioId))
 
-            if (req.body.apiarioId) {
-                const apiario = await ApiariosController.buscarApiarioPorId(Number(req.body.apiarioId))
+				if (apiario) {
+					if (apiario.usuarioId === req.usuario.id) {
+						const colmeiaValidada = await ColmeiasService.validarNovaColmeia(req.body)
 
-                if (apiario) {
-                    const colmeiaValidada = await ColmeiasService.validarNovaColmeia(req.body)
+						if (colmeiaValidada instanceof Array) {
+							return res.status(400).send(colmeiaValidada)
+						}
+						else {
+							const colmeia = await ColmeiasController.cadastrarColmeia(colmeiaValidada)
 
-                    if (colmeiaValidada instanceof Array) {
-                        return res.status(400).send(colmeiaValidada)
-                    }
-                    else {
-                        const colmeia = await ColmeiasController.cadastrarColmeia(colmeiaValidada)
-
-                        return res.status(201).send({
-                            id: colmeia.id,
-                            numero: colmeia.numero,
-                            apiarioId: colmeia.apiarioId
-                        })
-                    }
-                }
-                else {
-                    return res.status(404).json({ mensagem: 'Apiário não encontrado' })
-                }
-            }
-            else {
-                res.status(400).json({ mensagem: 'Apiário não informado' })
-            }
-        }
-        else {
-            res.status(401).json({ mensagem: 'Usuário não autenticado' })
-        }
-    }
-    catch (erro) {
-        logger.registrarErro(erro)
-        res.status(500).json({ mensagem: 'Erro desconhecido ao cadastrar apiário' })
-    }
+							return res.status(201).send({
+								id: colmeia.id,
+								numero: colmeia.numero,
+								apiarioId: colmeia.apiarioId
+							})
+						}
+					}
+					else {
+						return res.status(403).json({ mensagem: 'Usuário não autorizado a cadastrar colmeia neste apiário' })
+					}
+				}
+				else {
+					return res.status(404).json({ mensagem: 'Apiário não encontrado' })
+				}
+			}
+			else {
+				res.status(400).json([{ campo: 'apiarioId', mensagem: 'Apiário não informado' }])
+			}
+		}
+		else {
+			res.status(401).json({ mensagem: 'Usuário não autenticado' })
+		}
+	}
+	catch (erro) {
+		logger.registrarErro(erro)
+		res.status(500).json({ mensagem: 'Erro desconhecido ao cadastrar apiário' })
+	}
 })
 
 // router.get('/', async (req: Request, res: Response) => {

@@ -104,26 +104,26 @@ declare global {
         id: number
         numero: number
         apiarioId: number
-        estadoCriaNova: {
+        estadoCriaNova?: {
             localizada: CriaLocalizada
             quantidade?: QuantidadeCria
             estado?: EstadoCriaNova
         }
-        estadoCriaMadura: {
+        estadoCriaMadura?: {
             localizada: CriaLocalizada
             quantidade?: QuantidadeCria
             estado?: EstadoCriaMadura
         }
-        estadoMel: {
+        estadoMel?: {
             localizada: MelLocalizado
             quantidade?: QuantidadeMel
             estado?: EstadoMel
         }
-        estadoPolen: {
+        estadoPolen?: {
             localizada: PolenLocalizado
             quantidade?: QuantidadePolen
         }
-        estadoRainha: {
+        estadoRainha?: {
             localizada: RainhaLocalizada
             estado?: EstadoRainha
             aspecto?: AspectoRainha
