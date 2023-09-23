@@ -10,31 +10,36 @@ router.post('/', async (req: Request, res: Response) => {
 	try {
 		if (req.usuario) {
 			if (req.body.apiarioId) {
-				const apiario = await ApiariosController.buscarApiarioPorId(Number(req.body.apiarioId))
+				if (Number.isInteger(Number(req.body.apiarioId))) {
+					const apiario = await ApiariosController.buscarApiarioPorId(Number(req.body.apiarioId))
 
-				if (apiario) {
-					if (apiario.usuarioId === req.usuario.id) {
-						const colmeiaValidada = await ColmeiasService.validarNovaColmeia(req.body)
+					if (apiario) {
+						if (apiario.usuarioId === req.usuario.id) {
+							const colmeiaValidada = await ColmeiasService.validarNovaColmeia(req.body)
 
-						if (colmeiaValidada instanceof Array) {
-							return res.status(400).send(colmeiaValidada)
+							if (colmeiaValidada instanceof Array) {
+								return res.status(400).send(colmeiaValidada)
+							}
+							else {
+								const colmeia = await ColmeiasController.cadastrarColmeia(colmeiaValidada)
+
+								return res.status(201).send({
+									id: colmeia.id,
+									numero: colmeia.numero,
+									apiarioId: colmeia.apiarioId
+								})
+							}
 						}
 						else {
-							const colmeia = await ColmeiasController.cadastrarColmeia(colmeiaValidada)
-
-							return res.status(201).send({
-								id: colmeia.id,
-								numero: colmeia.numero,
-								apiarioId: colmeia.apiarioId
-							})
+							return res.status(403).json({ mensagem: 'Usuário não autorizado a cadastrar colmeia neste apiário' })
 						}
 					}
 					else {
-						return res.status(403).json({ mensagem: 'Usuário não autorizado a cadastrar colmeia neste apiário' })
+						return res.status(404).json({ mensagem: 'Apiário não encontrado' })
 					}
 				}
 				else {
-					return res.status(404).json({ mensagem: 'Apiário não encontrado' })
+					res.status(400).json([{ campo: 'apiarioId', mensagem: 'Apiário deve ser um número inteiro' }])
 				}
 			}
 			else {
@@ -51,100 +56,173 @@ router.post('/', async (req: Request, res: Response) => {
 	}
 })
 
-// router.get('/', async (req: Request, res: Response) => {
-// 	try {
-// 		if (req.usuario) {
-// 			const apiarios = await ApiariosController.buscarApiariosPorUsuarioId(req.usuario.id)
+router.get('/', async (req: Request, res: Response) => {
+	try {
+		if (req.usuario) {
+			if (req.query.apiarioId) {
+				if (Number.isInteger(Number(req.query.apiarioId))) {
+					const apiario = await ApiariosController.buscarApiarioPorId(Number(req.query.apiarioId))
 
-// 			if (apiarios.length > 0) {
-// 				return res.status(200).send(apiarios)
-// 			}
-// 			else {
-// 				return res.status(404).json({ mensagem: 'Não há apiários cadastrados para este usuário' })
-// 			}
-// 		}
-// 		else {
-// 			res.status(401).json({ mensagem: 'Usuário não autenticado' })
-// 		}
-// 	}
-// 	catch (erro) {
-// 		logger.registrarErro(erro)
-// 		res.status(500).json({ mensagem: 'Erro desconhecido ao listar apiários' })
-// 	}
-// })
+					if (apiario) {
+						if (apiario.usuarioId === req.usuario.id) {
+							const colmeias = await ColmeiasController.listarColmeiasPorApiarioId(Number(req.query.apiarioId))
 
-// router.patch('/:id', async (req: Request, res: Response) => {
-// 	try {
-// 		if (req.usuario) {
-// 			const apiario = await ApiariosController.buscarApiarioPorId(Number(req.params.id))
+							return res.status(200).send(colmeias)
+						}
+						else {
+							return res.status(403).json({ mensagem: 'Usuário não autorizado a visualizar colmeias deste apiário' })
+						}
+					}
+					else {
+						return res.status(404).json({ mensagem: 'Apiário não encontrado' })
+					}
+				}
+				else {
+					res.status(400).json({ mensagem: 'Id do apiário deve ser um número inteiro' })
+				}
+			}
+			else {
+				res.status(400).json({ mensagem: 'Id do apiário não informado' })
+			}
+		}
+		else {
+			res.status(401).json({ mensagem: 'Usuário não autenticado' })
+		}
+	}
+	catch (erro) {
+		logger.registrarErro(erro)
+		res.status(500).json({ mensagem: 'Erro desconhecido ao buscar colmeias' })
+	}
+})
 
-// 			if (apiario) {
-// 				if (apiario.usuarioId === req.usuario.id) {
-// 					const apiarioValidado = await ApiariosService.validarModificacaoApiario(req.body, req.usuario.id)
+router.get('/:id', async (req: Request, res: Response) => {
+	try {
+		if (req.usuario) {
+			if (Number.isInteger(Number(req.params.id))) {
+				const colmeia = await ColmeiasController.buscarColmeiaPorId(Number(req.params.id))
 
-// 					if (apiarioValidado instanceof Array) {
-// 						return res.status(400).send(apiarioValidado)
-// 					}
-// 					else {
-// 						const apiarioAtualizado = await ApiariosController.atualizarApiarioPorId(Number(req.params.id), apiarioValidado)
+				if (colmeia) {
+					const apiario = await ApiariosController.buscarApiarioPorId(colmeia.apiarioId)
 
-// 						if (apiarioAtualizado) {
-// 							return res.status(200).send({
-// 								id: apiarioAtualizado.id,
-// 								nome: apiarioAtualizado.nome,
-// 								usuarioId: apiarioAtualizado.usuarioId
-// 							})
-// 						}
-// 						else {
-// 							return res.status(500).json({ mensagem: 'Erro desconhecido ao modificar apiário' })
-// 						}
-// 					}
-// 				}
-// 				else {
-// 					return res.status(403).json({ mensagem: 'Usuário não autorizado a modificar este apiário' })
-// 				}
-// 			}
-// 			else {
-// 				return res.status(404).json({ mensagem: 'Apiário não encontrado' })
-// 			}
-// 		}
-// 		else {
-// 			res.status(401).json({ mensagem: 'Usuário não autenticado' })
-// 		}
-// 	}
-// 	catch (erro) {
-// 		logger.registrarErro(erro)
-// 		res.status(500).json({ mensagem: 'Erro desconhecido ao modificar apiário' })
-// 	}
-// })
+					if (apiario) {
+						if (apiario.usuarioId === req.usuario.id) {
+							return res.status(200).send(colmeia)
+						}
+						else {
+							return res.status(403).json({ mensagem: 'Usuário não autorizado a visualizar esta colmeia' })
+						}
+					}
+					else {
+						return res.status(404).json({ mensagem: 'Apiário não encontrado' })
+					}
+				}
+				else {
+					return res.status(404).json({ mensagem: 'Colmeia não encontrada' })
+				}
+			}
+			else {
+				res.status(400).json({ mensagem: 'Id da colmeia deve ser um número inteiro' })
+			}
+		}
+		else {
+			res.status(401).json({ mensagem: 'Usuário não autenticado' })
+		}
+	}
+	catch (erro) {
+		logger.registrarErro(erro)
+		res.status(500).json({ mensagem: 'Erro desconhecido ao buscar colmeia' })
+	}
+})
 
-// router.delete('/:id', async (req: Request, res: Response) => {
-// 	try {
-// 		if (req.usuario) {
-// 			const apiario = await ApiariosController.buscarApiarioPorId(Number(req.params.id))
+router.patch('/:id', async (req: Request, res: Response) => {
+	try {
+		if (req.usuario) {
+			if (Number.isInteger(Number(req.params.id))) {
+				const colmeia = await ColmeiasController.buscarColmeiaPorId(Number(req.params.id))
 
-// 			if (apiario) {
-// 				if (apiario.usuarioId === req.usuario.id) {
-// 					await ApiariosController.apagarApiarioPorId(Number(req.params.id))
+				if (colmeia) {
+					const apiario = await ApiariosController.buscarApiarioPorId(colmeia.apiarioId)
 
-// 					res.status(200).send({ mensagem: 'Apiário apagado com sucesso' })
-// 				}
-// 				else {
-// 					return res.status(403).json({ mensagem: 'Usuário não autorizado a apagar este apiário' })
-// 				}
-// 			}
-// 			else {
-// 				return res.status(404).json({ mensagem: 'Apiário não encontrado' })
-// 			}
-// 		}
-// 		else {
-// 			res.status(401).json({ mensagem: 'Usuário não autenticado' })
-// 		}
-// 	}
-// 	catch (erro) {
-// 		logger.registrarErro(erro)
-// 		res.status(500).json({ mensagem: 'Erro desconhecido ao apagar apiário' })
-// 	}
-// })
+					if (apiario) {
+						if (apiario.usuarioId === req.usuario.id) {
+							const colmeiaValidada = await ColmeiasService.validarAtualizacaoColmeia(req.body)
+
+							if (colmeiaValidada instanceof Array) {
+								return res.status(400).send(colmeiaValidada)
+							}
+							else {
+								const colmeiaAtualizada = Object.assign(colmeia, colmeiaValidada)
+
+								await ColmeiasController.atualizarColmeiaPorId(Number(req.params.id), colmeiaAtualizada)
+
+								return res.status(200).send({ mensagem: 'Colmeia atualizada com sucesso' })
+							}
+						}
+						else {
+							return res.status(403).json({ mensagem: 'Usuário não autorizado a atualizar esta colmeia' })
+						}
+					}
+					else {
+						return res.status(404).json({ mensagem: 'Apiário não encontrado' })
+					}
+				}
+				else {
+					return res.status(404).json({ mensagem: 'Colmeia não encontrada' })
+				}
+			}
+			else {
+				res.status(400).json({ mensagem: 'Id da colmeia deve ser um número inteiro' })
+			}
+		}
+		else {
+			res.status(401).json({ mensagem: 'Usuário não autenticado' })
+		}
+	}
+	catch (erro) {
+		logger.registrarErro(erro)
+		res.status(500).json({ mensagem: 'Erro desconhecido ao atualizar colmeia' })
+	}
+})
+
+router.delete('/:id', async (req: Request, res: Response) => {
+	try {
+		if (req.usuario) {
+			if (Number.isInteger(Number(req.params.id))) {
+				const colmeia = await ColmeiasController.buscarColmeiaPorId(Number(req.params.id))
+
+				if (colmeia) {
+					const apiario = await ApiariosController.buscarApiarioPorId(colmeia.apiarioId)
+
+					if (apiario) {
+						if (apiario.usuarioId === req.usuario.id) {
+							await ColmeiasController.removerColmeiaPorId(Number(req.params.id))
+
+							return res.status(200).send({ mensagem: 'Colmeia deletada com sucesso' })
+						}
+						else {
+							return res.status(403).json({ mensagem: 'Usuário não autorizado a deletar esta colmeia' })
+						}
+					}
+					else {
+						return res.status(404).json({ mensagem: 'Apiário não encontrado' })
+					}
+				}
+				else {
+					return res.status(404).json({ mensagem: 'Colmeia não encontrada' })
+				}
+			}
+			else {
+				res.status(400).json({ mensagem: 'Id da colmeia deve ser um número inteiro' })
+			}
+		}
+		else {
+			res.status(401).json({ mensagem: 'Usuário não autenticado' })
+		}
+	}
+	catch (erro) {
+		logger.registrarErro(erro)
+		res.status(500).json({ mensagem: 'Erro desconhecido ao deletar colmeia' })
+	}
+})
 
 export default router

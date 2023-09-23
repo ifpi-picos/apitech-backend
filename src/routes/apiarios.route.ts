@@ -80,6 +80,7 @@ router.patch('/:id', async (req: Request, res: Response) => {
 							})
 						}
 						else {
+							logger.registrarErro({ mensagem: 'Erro desconhecido ao modificar apiário', resposta: apiarioAtualizado })
 							return res.status(500).json({ mensagem: 'Erro desconhecido ao modificar apiário' })
 						}
 					}
