@@ -19,6 +19,10 @@ const config: VariaveisAmbiente = {
 	API_TOKEN: process.env.API_TOKEN as string,
 	API_BASE: process.env.API_BASE as string,
 	SALT_ROUNDS: parseInt(process.env.SALT_ROUNDS as string),
+	EMAIL_HOST: process.env.EMAIL_HOST as string,
+	EMAIL_PORT: parseInt(process.env.EMAIL_PORT as string),
+	EMAIL_USER: process.env.EMAIL_USER as string,
+	EMAIL_PASSWORD: process.env.EMAIL_PASSWORD as string,
 }
 
 export default config

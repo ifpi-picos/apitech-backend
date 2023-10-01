@@ -115,4 +115,8 @@ export class UsuariosService {
 	static gerarToken(id: number): string {
 		return jwt.sign({ id }, config.JWT_TOKEN, { expiresIn: '8d' })
 	}
+
+	static async hashSenha(senha: string): Promise<string> {
+		return await bcrypt.hash(senha, config.SALT_ROUNDS)
+	}
 }

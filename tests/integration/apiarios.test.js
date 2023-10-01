@@ -10,7 +10,17 @@ describe('POST /apiarios', () => {
 	beforeAll(async () => {
 		app = await construirApp
 
-		await db.default.apiarios.deleteMany({})
+		await db.default.apiarios.deleteMany({
+			where: {
+				OR: [
+					{ nome: 'Teste' },
+					{ nome: 'Teste Get Apiarios' },
+					{ nome: 'Teste Patch Apiarios' },
+					{ nome: 'Teste Delete Apiarios' },
+					{ nome: 'Teste Patch Apiarios II' },
+				]
+			}
+		})
 
 		await request(app).post('/usuarios').send({
 			nome: 'Teste Apiarios',
@@ -62,7 +72,17 @@ describe('GET /apiarios', () => {
 	beforeAll(async () => {
 		app = await construirApp
 
-		await db.default.apiarios.deleteMany({})
+		await db.default.apiarios.deleteMany({
+			where: {
+				OR: [
+					{ nome: 'Teste' },
+					{ nome: 'Teste Get Apiarios' },
+					{ nome: 'Teste Patch Apiarios' },
+					{ nome: 'Teste Delete Apiarios' },
+					{ nome: 'Teste Patch Apiarios II' },
+				]
+			}
+		})
 
 		await request(app).post('/usuarios').send({
 			nome: 'Teste Apiarios',
@@ -108,7 +128,17 @@ describe('PATCH /apiarios/:id', () => {
 	beforeAll(async () => {
 		app = await construirApp
 
-		await db.default.apiarios.deleteMany({})
+		await db.default.apiarios.deleteMany({
+			where: {
+				OR: [
+					{ nome: 'Teste' },
+					{ nome: 'Teste Get Apiarios' },
+					{ nome: 'Teste Patch Apiarios' },
+					{ nome: 'Teste Delete Apiarios' },
+					{ nome: 'Teste Patch Apiarios II' },
+				]
+			}
+		})
 
 		await request(app).post('/usuarios').send({
 			nome: 'Teste Apiarios',
@@ -215,7 +245,17 @@ describe('DELETE /apiarios/:id', () => {
 	beforeAll(async () => {
 		app = await construirApp
 
-		await db.default.apiarios.deleteMany({})
+		await db.default.apiarios.deleteMany({
+			where: {
+				OR: [
+					{ nome: 'Teste' },
+					{ nome: 'Teste Get Apiarios' },
+					{ nome: 'Teste Patch Apiarios' },
+					{ nome: 'Teste Delete Apiarios' },
+					{ nome: 'Teste Patch Apiarios II' },
+				]
+			}
+		})
 
 		await request(app).post('/usuarios').send({
 			nome: 'Teste Apiarios',

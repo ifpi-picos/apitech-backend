@@ -10,6 +10,10 @@ declare global {
         API_TOKEN: string
         API_BASE: string
         SALT_ROUNDS: number
+        EMAIL_HOST: string
+        EMAIL_PORT: number
+        EMAIL_USER: string
+        EMAIL_PASSWORD: string
     }
 
     type Usuario = {
@@ -107,6 +111,19 @@ declare global {
             estado?: EstadoRainha
             aspecto?: AspectoRainha
         }
+    }
+
+    type CodigoRecuperacao = {
+        id: number
+        codigo: string
+        usuarioId: number
+        expiraEm: Date
+    }
+
+    type CodigoRecuperacaoPreCadastro = {
+        codigo: string
+        usuarioId: number
+        expiraEm: Date
     }
 
     namespace Express {
