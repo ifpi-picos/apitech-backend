@@ -11,8 +11,25 @@ describe('POST /colmeias', () => {
 	beforeAll(async () => {
 		app = await construirApp
 
-		await db.default.apiarios.deleteMany({})
-		await db.default.colmeias.deleteMany({})
+		await db.default.apiarios.deleteMany({
+			where: {
+				OR: [
+					{ nome: 'Teste Colmeias' },
+					{ nome: 'Teste Colmeias 2' },
+					{ nome: 'Teste Colmeias 3' }
+				]
+			}
+		})
+
+		await db.default.colmeias.deleteMany({
+			where: {
+				OR: [
+					{ numero: 1 },
+					{ numero: 2 },
+					{ numero: 3 }
+				]
+			}
+		})
 
 		await request(app).post('/usuarios').send({
 			nome: 'Teste Colmeias',
@@ -129,8 +146,25 @@ describe('GET /colmeias', () => {
 	beforeAll(async () => {
 		app = await construirApp
 
-		await db.default.apiarios.deleteMany({})
-		await db.default.colmeias.deleteMany({})
+		await db.default.apiarios.deleteMany({
+			where: {
+				OR: [
+					{ nome: 'Teste Colmeias' },
+					{ nome: 'Teste Colmeias 2' },
+					{ nome: 'Teste Colmeias 3' }
+				]
+			}
+		})
+
+		await db.default.colmeias.deleteMany({
+			where: {
+				OR: [
+					{ numero: 1 },
+					{ numero: 2 },
+					{ numero: 3 }
+				]
+			}
+		})
 
 		await request(app).post('/usuarios').send({
 			nome: 'Teste Colmeias',
@@ -224,8 +258,25 @@ describe('GET /colmeias/:id', () => {
 	beforeAll(async () => {
 		app = await construirApp
 
-		await db.default.apiarios.deleteMany({})
-		await db.default.colmeias.deleteMany({})
+		await db.default.apiarios.deleteMany({
+			where: {
+				OR: [
+					{ nome: 'Teste Colmeias' },
+					{ nome: 'Teste Colmeias 2' },
+					{ nome: 'Teste Colmeias 3' }
+				]
+			}
+		})
+
+		await db.default.colmeias.deleteMany({
+			where: {
+				OR: [
+					{ numero: 1 },
+					{ numero: 2 },
+					{ numero: 3 }
+				]
+			}
+		})
 
 		await request(app).post('/usuarios').send({
 			nome: 'Teste Colmeias',
@@ -339,8 +390,25 @@ describe('PATCH /colmeia/:id', () => {
 	beforeAll(async () => {
 		app = await construirApp
 
-		await db.default.apiarios.deleteMany({})
-		await db.default.colmeias.deleteMany({})
+		await db.default.apiarios.deleteMany({
+			where: {
+				OR: [
+					{ nome: 'Teste Colmeias' },
+					{ nome: 'Teste Colmeias 2' },
+					{ nome: 'Teste Colmeias 3' }
+				]
+			}
+		})
+
+		await db.default.colmeias.deleteMany({
+			where: {
+				OR: [
+					{ numero: 1 },
+					{ numero: 2 },
+					{ numero: 3 }
+				]
+			}
+		})
 
 		await request(app).post('/usuarios').send({
 			nome: 'Teste Colmeias',
@@ -444,8 +512,25 @@ describe('DELETE /colmeias/:id', () => {
 	beforeAll(async () => {
 		app = await construirApp
 
-		await db.default.apiarios.deleteMany({})
-		await db.default.colmeias.deleteMany({})
+		await db.default.apiarios.deleteMany({
+			where: {
+				OR: [
+					{ nome: 'Teste Colmeias' },
+					{ nome: 'Teste Colmeias 2' },
+					{ nome: 'Teste Colmeias 3' }
+				]
+			}
+		})
+
+		await db.default.colmeias.deleteMany({
+			where: {
+				OR: [
+					{ numero: 1 },
+					{ numero: 2 },
+					{ numero: 3 }
+				]
+			}
+		})
 
 		await request(app).post('/usuarios').send({
 			nome: 'Teste Colmeias',

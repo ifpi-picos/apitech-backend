@@ -1,7 +1,6 @@
 import { ColmeiasController } from '../controllers/colmeias.controller'
 import { CriaLocalizada, QuantidadeCria, EstadoCriaNova, EstadoCriaMadura, MelLocalizado, QuantidadeMel, EstadoMel, PolenLocalizado, QuantidadePolen, RainhaLocalizada, EstadoRainha, AspectoRainha } from '../types/enums'
 
-
 type ErrosDeValidacao = { campo: string, mensagem: string }[]
 
 export class ColmeiasService {

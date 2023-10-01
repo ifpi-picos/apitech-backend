@@ -8,7 +8,15 @@ describe('POST /usuarios', () => {
 	beforeAll(async () => {
 		app = await construirApp
 
-		await db.default.usuarios.deleteMany({})
+		await db.default.usuarios.deleteMany({
+			where: {
+				OR: [
+					{ email: 'teste_cadastro' },
+					{ email: 'teste_cadastro2' },
+					{ email: 'teste_cadastro3' }
+				]
+			}
+		})
 	})
 
 	it('201 - Cadastro de novo usuário', async () => {
@@ -218,7 +226,6 @@ describe('PATCH /usuarios', () => {
 		expect(res.body.length).toBe(1)
 	})
 })
-
 
 describe('DELETE /usuarios', () => {
 	let app

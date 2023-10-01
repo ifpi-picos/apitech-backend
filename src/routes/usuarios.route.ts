@@ -56,7 +56,7 @@ router.patch('/', async (req: Request, res: Response) => {
 				return res.status(400).send(usuarioValidado)
 			}
 			else {
-				const usuario = await UsuariosController.atualizarUsuario(req.usuario.id, usuarioValidado)
+				const usuario = await UsuariosController.atualizarUsuarioPorId(req.usuario.id, usuarioValidado)
 
 				return res.status(200).json({
 					id: usuario.id,
@@ -78,7 +78,7 @@ router.patch('/', async (req: Request, res: Response) => {
 router.delete('/', async (req: Request, res: Response) => {
 	try {
 		if (req.usuario) {
-			await UsuariosController.apagarUsuario(req.usuario.id)
+			await UsuariosController.apagarUsuarioPorId(req.usuario.id)
 
 			res.status(200).json({ mensagem: 'Usuário apagado com sucesso' })
 		}

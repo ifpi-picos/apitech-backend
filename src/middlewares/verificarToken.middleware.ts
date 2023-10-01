@@ -3,7 +3,7 @@ import { UsuariosController } from '../controllers/usuarios.controller'
 import jwt from 'jsonwebtoken'
 import config from '../config/config'
 
-const rotasIgnoradas: string[] = ['POST|/login', 'POST|/usuarios']
+const rotasIgnoradas: string[] = ['POST|/login', 'POST|/usuarios', 'POST|/redefinir-senha']
 
 export async function verificarToken(req: Request, res: Response, next: NextFunction) {
 	req.startTime = performance.now()

@@ -9,11 +9,12 @@ datasource db {
 }
 
 model Usuarios {
-    id       Int        @id @default(autoincrement())
-    nome     String
-    email    String     @unique
-    senha    String
-    apiarios Apiarios[]
+    id                 Int                  @id @default(autoincrement())
+    nome               String
+    email              String               @unique
+    senha              String
+    apiarios           Apiarios[]
+    CodigosRecuperacao CodigosRecuperacao[]
 }
 
 model Apiarios {
@@ -34,4 +35,12 @@ model Colmeias {
     estadoMel        Json?    @default("{}")
     estadoPolen      Json?    @default("{}")
     estadoRainha     Json?    @default("{}")
+}
+
+model CodigosRecuperacao {
+    id        Int      @id @default(autoincrement())
+    codigo    String   @unique
+    usuario   Usuarios @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+    usuarioId Int      @unique
+    expiraEm  DateTime @db.Timestamptz()
 }
