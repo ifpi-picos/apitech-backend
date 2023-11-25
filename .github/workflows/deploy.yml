@@ -23,5 +23,6 @@ jobs:
             npm prune
             npm install
             npm audit fix --force
+            npx prisma generate
             npm run build
             pm2 reload apitech

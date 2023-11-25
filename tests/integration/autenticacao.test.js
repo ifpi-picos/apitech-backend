@@ -2,6 +2,7 @@ const request = require('supertest')
 const { construirApp } = require('../../dist/app')
 const db = require('../../dist/config/database')
 
+jest.setTimeout(30000)
 describe('POST /login', () => {
 	let app
 

@@ -54,11 +54,11 @@ export class ColmeiasController {
 	static async atualizarColmeiaPorId(id: number, colmeia: Colmeia & ColmeiaPreModificacao): Promise<Colmeia | null> {
 		return toColmeia(await db.colmeias.update({
 			where: { id: id }, data: {
-				estadoCriaNova: colmeia.estadoCriaNova,
-				estadoCriaMadura: colmeia.estadoCriaMadura,
-				estadoMel: colmeia.estadoMel,
-				estadoPolen: colmeia.estadoPolen,
-				estadoRainha: colmeia.estadoRainha
+				estadoCriaNova: JSON.stringify(colmeia.estadoCriaNova ? colmeia.estadoCriaNova : {}),
+				estadoCriaMadura: JSON.stringify(colmeia.estadoCriaMadura ? colmeia.estadoCriaMadura : {}),
+				estadoMel: JSON.stringify(colmeia.estadoMel ? colmeia.estadoMel : {}),
+				estadoPolen: JSON.stringify(colmeia.estadoPolen ? colmeia.estadoPolen : {}),
+				estadoRainha: JSON.stringify(colmeia.estadoRainha ? colmeia.estadoRainha : {})
 			}
 		}))
 	}
