@@ -439,6 +439,13 @@ describe('PATCH /colmeia/:id', () => {
 
 		expect(res.status).toBe(200)
 		expect(res.body).toHaveProperty('mensagem')
+
+		const colmeiaDb = await db.default.colmeias.findUnique({ where: { id: colmeiaId } })
+		expect(JSON.parse(colmeiaDb.estadoCriaMadura)).toEqual(atualizacaoColmeia.estadoCriaMadura)
+		expect(JSON.parse(colmeiaDb.estadoCriaNova)).toEqual(atualizacaoColmeia.estadoCriaNova)
+		expect(JSON.parse(colmeiaDb.estadoMel)).toEqual(atualizacaoColmeia.estadoMel)
+		expect(JSON.parse(colmeiaDb.estadoPolen)).toEqual(atualizacaoColmeia.estadoPolen)
+		expect(JSON.parse(colmeiaDb.estadoRainha)).toEqual(atualizacaoColmeia.estadoRainha)
 	})
 
 	it('400 - Atualizar informações de uma colmeia com dados inválidos', async () => {
