@@ -33,6 +33,12 @@ declare global {
         id: number
         numero: number
         apiarioId: number
+    }
+
+    type ColmeiaHistorico = {
+        id: number
+        colmeiaId: number
+        data: Date
         estadoCriaNova?: {
             localizada: CriaLocalizada
             quantidade?: QuantidadeCria

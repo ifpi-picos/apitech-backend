@@ -19,7 +19,7 @@ export class ColmeiasService {
 	}
 
 	static async validarAtualizacaoColmeia(body: unknown) {
-		const colmeia = body as Colmeia
+		const colmeia = body as ColmeiaHistorico
 
 		const errosDeValidacao: ErrosDeValidacao = []
 

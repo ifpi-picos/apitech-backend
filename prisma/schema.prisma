@@ -18,23 +18,31 @@ model Usuarios {
 }
 
 model Apiarios {
-    id        Int        @id @default(autoincrement())
-    nome      String
-    usuario   Usuarios   @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-    usuarioId Int
-    colmeias  Colmeias[]
+    id                Int                 @id @default(autoincrement())
+    nome              String
+    usuario           Usuarios            @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+    usuarioId         Int
+    colmeias          Colmeias[]
 }
 
 model Colmeias {
+    id                Int                 @id @default(autoincrement())
+    numero            Int
+    apiario           Apiarios            @relation(fields: [apiarioId], references: [id], onDelete: Cascade)
+    apiarioId         Int
+    ColmeiasHistorico ColmeiasHistorico[]
+}
+
+model ColmeiasHistorico {
     id               Int      @id @default(autoincrement())
-    numero           Int
-    apiario          Apiarios @relation(fields: [apiarioId], references: [id], onDelete: Cascade)
-    apiarioId        Int
+    colmeia          Colmeias @relation(fields: [colmeiaId], references: [id], onDelete: Cascade)
+    colmeiaId        Int
     estadoCriaNova   Json?    @default("{}")
     estadoCriaMadura Json?    @default("{}")
     estadoMel        Json?    @default("{}")
     estadoPolen      Json?    @default("{}")
     estadoRainha     Json?    @default("{}")
+    data             DateTime @db.Timestamptz()
 }
 
 model CodigosRecuperacao {
