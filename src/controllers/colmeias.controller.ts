@@ -9,11 +9,24 @@ function toColmeia(colmeiaDb: unknown): Colmeia | null {
 			id: colmeia.id,
 			numero: colmeia.numero,
 			apiarioId: colmeia.apiarioId,
-			estadoCriaNova: colmeia.estadoCriaNova,
-			estadoCriaMadura: colmeia.estadoCriaMadura,
-			estadoMel: colmeia.estadoMel,
-			estadoPolen: colmeia.estadoPolen,
-			estadoRainha: colmeia.estadoRainha
+		}
+	}
+}
+
+function toColmeiaHistorico(ColmeiaHistoricoDb: unknown): ColmeiaHistorico | null {
+	const colmeiaHistorico = ColmeiaHistoricoDb as ColmeiaHistorico
+
+	if (!colmeiaHistorico) { return null }
+	else {
+		return {
+			id: colmeiaHistorico.id,
+			colmeiaId: colmeiaHistorico.colmeiaId,
+			data: colmeiaHistorico.data,
+			estadoCriaNova: colmeiaHistorico.estadoCriaNova,
+			estadoCriaMadura: colmeiaHistorico.estadoCriaMadura,
+			estadoMel: colmeiaHistorico.estadoMel,
+			estadoPolen: colmeiaHistorico.estadoPolen,
+			estadoRainha: colmeiaHistorico.estadoRainha,
 		}
 	}
 }
@@ -27,10 +40,31 @@ export class ColmeiasController {
 		return toColmeia(await db.colmeias.findUnique({ where: { id: id } }))
 	}
 
+	static async buscarColmeiaComHistoricoPorId(id: number): Promise<ColmeiaHistorico | null> {
+		return toColmeiaHistorico(await db.colmeiasHistorico.findFirst({
+			where: { colmeiaId: id },
+			orderBy: { data: 'desc' }
+		}))
+	}
+
 	static async buscarColmeiasPorApiarioId(apiarioId: number): Promise<Colmeia[]> {
 		const colmeias = await db.colmeias.findMany({ where: { apiarioId: apiarioId } })
 		if (colmeias.length > 0) {
 			return colmeias.map(colmeia => toColmeia(colmeia)!)
+		}
+		else {
+			return []
+		}
+	}
+
+	static async buscarHistoricoPorColmeiaId(colmeiaId: number): Promise<ColmeiaHistorico[]> {
+		const colmeiasHistorico = await db.colmeiasHistorico.findMany({
+			where: { colmeiaId: colmeiaId },
+			orderBy: { data: 'desc' }
+		})
+
+		if (colmeiasHistorico.length > 0) {
+			return colmeiasHistorico.map(colmeiaHistorico => toColmeiaHistorico(colmeiaHistorico)!)
 		}
 		else {
 			return []
@@ -51,16 +85,35 @@ export class ColmeiasController {
 		return await db.colmeias.count({ where: { apiarioId: apiarioId } })
 	}
 
-	static async atualizarColmeiaPorId(id: number, colmeia: Colmeia & ColmeiaPreModificacao): Promise<Colmeia | null> {
-		return toColmeia(await db.colmeias.update({
-			where: { id: id }, data: {
-				estadoCriaNova: JSON.stringify(colmeia.estadoCriaNova ? colmeia.estadoCriaNova : {}),
-				estadoCriaMadura: JSON.stringify(colmeia.estadoCriaMadura ? colmeia.estadoCriaMadura : {}),
-				estadoMel: JSON.stringify(colmeia.estadoMel ? colmeia.estadoMel : {}),
-				estadoPolen: JSON.stringify(colmeia.estadoPolen ? colmeia.estadoPolen : {}),
-				estadoRainha: JSON.stringify(colmeia.estadoRainha ? colmeia.estadoRainha : {})
+	static async cadastrarAtualizacaoPorColmeiaId(colmeiaId: number, colmeia: Colmeia & ColmeiaPreModificacao): Promise<ColmeiaHistorico | null> {
+		return await db.$transaction(async (db) => {
+			const colmeiaHistorico = toColmeiaHistorico(await db.colmeiasHistorico.create({
+				data: {
+					colmeiaId: colmeiaId,
+					data: new Date(),
+					estadoCriaNova: JSON.stringify(colmeia.estadoCriaNova ? colmeia.estadoCriaNova : {}),
+					estadoCriaMadura: JSON.stringify(colmeia.estadoCriaMadura ? colmeia.estadoCriaMadura : {}),
+					estadoMel: JSON.stringify(colmeia.estadoMel ? colmeia.estadoMel : {}),
+					estadoPolen: JSON.stringify(colmeia.estadoPolen ? colmeia.estadoPolen : {}),
+					estadoRainha: JSON.stringify(colmeia.estadoRainha ? colmeia.estadoRainha : {}),
+				}
+			}))
+
+			const entradasColmeiaHistorico = await db.colmeiasHistorico.count({ where: { colmeiaId: colmeiaId } })
+
+			if (entradasColmeiaHistorico > 50) {
+				const colmeiaHistoricoMaisAntigo = await db.colmeiasHistorico.findFirst({
+					where: { colmeiaId: colmeiaId },
+					orderBy: { data: 'asc' }
+				})
+
+				if (colmeiaHistoricoMaisAntigo) {
+					await db.colmeiasHistorico.delete({ where: { id: colmeiaHistoricoMaisAntigo.id } })
+				}
 			}
-		}))
+
+			return colmeiaHistorico
+		})
 	}
 
 	static async removerColmeiaPorId(id: number): Promise<Colmeia | null> {

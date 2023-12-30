@@ -381,6 +381,122 @@ describe('GET /colmeias/:id', () => {
 	})
 })
 
+describe('GET /colmeias/:id/historico', () => {
+	let app
+	let token
+	let apiarioId
+	let colmeiaId
+
+	beforeAll(async () => {
+		app = await construirApp
+
+		await db.default.apiarios.deleteMany({
+			where: {
+				OR: [
+					{ nome: 'Teste Colmeias' },
+					{ nome: 'Teste Colmeias 2' },
+					{ nome: 'Teste Colmeias 3' }
+				]
+			}
+		})
+
+		await db.default.colmeias.deleteMany({
+			where: {
+				OR: [
+					{ numero: 1 },
+					{ numero: 2 },
+					{ numero: 3 }
+				]
+			}
+		})
+
+		await request(app).post('/usuarios').send({
+			nome: 'Teste Colmeias',
+			email: 'teste_get_colmeias_historico@email.com',
+			senha: '12345678'
+		})
+
+		const res = await request(app).post('/login').send({
+			email: 'teste_get_colmeias_historico@email.com',
+			senha: '12345678'
+		})
+
+		token = res.body.token
+
+		const res2 = await request(app).post('/apiarios').set('Authorization', `Bearer ${token}`).send({
+			nome: 'Teste Colmeias',
+		})
+
+		apiarioId = res2.body.id
+
+		const res3 = await request(app).post('/colmeias').set('Authorization', `Bearer ${token}`).send({ apiarioId: apiarioId })
+
+		colmeiaId = res3.body.id
+
+		await request(app).patch(`/colmeias/${colmeiaId}`).set('Authorization', `Bearer ${token}`).send(atualizacaoColmeia)
+	})
+
+	it('200 - Obter histórico completo de uma colmeia', async () => {
+		const res = await request(app).get(`/colmeias/${colmeiaId}/historico`).set('Authorization', `Bearer ${token}`)
+
+		expect(res.status).toBe(200)
+		expect(res.body).toBeInstanceOf(Array)
+		expect(res.body[0]).toHaveProperty('id')
+		expect(res.body[0]).toHaveProperty('numero')
+		expect(res.body[0]).toHaveProperty('apiarioId')
+		expect(res.body[0]).toHaveProperty('estadoCriaNova')
+		expect(res.body[0]).toHaveProperty('estadoCriaMadura')
+		expect(res.body[0]).toHaveProperty('estadoMel')
+		expect(res.body[0]).toHaveProperty('estadoPolen')
+		expect(res.body[0]).toHaveProperty('estadoRainha')
+	})
+
+	it('400 - Obter histórico completo de uma colmeia com id inválido', async () => {
+		const res = await request(app).get('/colmeias/a/historico').set('Authorization', `Bearer ${token}`)
+
+		expect(res.status).toBe(400)
+		expect(res.body).toHaveProperty('mensagem')
+	})
+
+	it('403 - Obter histórico completo de uma colmeia de outro usuário', async () => {
+		await request(app).post('/usuarios').send({
+			nome: 'Teste Colmeias II',
+			email: 'teste_get_colmeias_2@email.com',
+			senha: '12345678'
+		})
+
+		const res = await request(app).post('/login').send({
+			email: 'teste_get_colmeias_2@email.com',
+			senha: '12345678'
+		})
+
+		const token2 = res.body.token
+
+		const res2 = await request(app).post('/apiarios').set('Authorization', `Bearer ${token2}`).send({
+			nome: 'Teste Colmeias 2',
+		})
+
+		const apiarioId2 = res2.body.id
+
+		const res3 = await request(app).post('/colmeias').set('Authorization', `Bearer ${token2}`).send({ apiarioId: apiarioId2 })
+
+		const colmeiaId2 = res3.body.id
+
+		const res4 = await request(app).get(`/colmeias/${colmeiaId2}/historico`).set('Authorization', `Bearer ${token}`)
+
+		expect(res4.status).toBe(403)
+		expect(res4.body).toHaveProperty('mensagem')
+	})
+
+	it('404 - Obter histórico completo de uma colmeia inexistente', async () => {
+		const res = await request(app).get('/colmeias/-1/historico').set('Authorization', `Bearer ${token}`)
+
+		expect(res.status).toBe(404)
+		expect(res.body).toHaveProperty('mensagem')
+	})
+})
+
+
 describe('PATCH /colmeia/:id', () => {
 	let app
 	let token
@@ -440,12 +556,13 @@ describe('PATCH /colmeia/:id', () => {
 		expect(res.status).toBe(200)
 		expect(res.body).toHaveProperty('mensagem')
 
-		const colmeiaDb = await db.default.colmeias.findUnique({ where: { id: colmeiaId } })
-		expect(JSON.parse(colmeiaDb.estadoCriaMadura)).toEqual(atualizacaoColmeia.estadoCriaMadura)
-		expect(JSON.parse(colmeiaDb.estadoCriaNova)).toEqual(atualizacaoColmeia.estadoCriaNova)
-		expect(JSON.parse(colmeiaDb.estadoMel)).toEqual(atualizacaoColmeia.estadoMel)
-		expect(JSON.parse(colmeiaDb.estadoPolen)).toEqual(atualizacaoColmeia.estadoPolen)
-		expect(JSON.parse(colmeiaDb.estadoRainha)).toEqual(atualizacaoColmeia.estadoRainha)
+		const colmeiaDb = await db.default.colmeiasHistorico.findMany({ where: { colmeiaId: colmeiaId }, orderBy: { data: 'desc' }, take: 1 })
+
+		expect(JSON.parse(colmeiaDb[0].estadoCriaMadura)).toEqual(atualizacaoColmeia.estadoCriaMadura)
+		expect(JSON.parse(colmeiaDb[0].estadoCriaNova)).toEqual(atualizacaoColmeia.estadoCriaNova)
+		expect(JSON.parse(colmeiaDb[0].estadoMel)).toEqual(atualizacaoColmeia.estadoMel)
+		expect(JSON.parse(colmeiaDb[0].estadoPolen)).toEqual(atualizacaoColmeia.estadoPolen)
+		expect(JSON.parse(colmeiaDb[0].estadoRainha)).toEqual(atualizacaoColmeia.estadoRainha)
 	})
 
 	it('400 - Atualizar informações de uma colmeia com dados inválidos', async () => {
